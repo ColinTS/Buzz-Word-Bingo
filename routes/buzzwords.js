@@ -4,6 +4,15 @@ const router = express.Router();
 
 const buzzWordCollection = [];
 
+//HELPER FUNCTIONS
+// find index of Buzz Word
+function findIndex(req) {
+  const buzzWordsObj = req.app.get('buzzWords');
+  return buzzWordsObj.buzzWords.findIndex((obj) => {
+    return obj.buzzWord === req.body.buzzWord;
+  });
+}
+
 router.route('/')
   .get((req, res) => {
     res.send({'buzzWords': buzzWordCollection.map( (x) => {
@@ -38,7 +47,15 @@ router.route('/')
 
   })
   .delete((req, res) => {
-    res.json({success: true});
+    if(buzzWordCollection.map((x) => {
+      return x.buzzWord;}).indexOf(req.body.buzzWord) === -1){
+      res.send({success: false});
+    } else {
+      buzzWordCollection.splice(buzzWordCollection.map((x) => {
+      return x.buzzWord;}).indexOf(req.body.buzzWord), 1);
+      res.send({success: true});
+    }
+    console.log(buzzWordCollection);
   });
 
 module.exports = router;
